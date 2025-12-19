@@ -36,11 +36,11 @@ screenshots/
 ├── network-diagram.png
 ```
 
-```md
+
 ![Dashboard](screenshots/dashboard.png)
 ![Dark Mode](screenshots/dark-mode.png)
 ![Network Diagram](screenshots/network-diagram.png)
-```
+
 
 ---
 
@@ -91,14 +91,14 @@ screenshots/
 ## 📁🗂️ Project Structure
 
 ```
-net-scanner/
+network-scanner/
 ├── discovery.py        # ICMP discovery
 ├── port_scan.py        # Port scanning
 ├── hostname.py         # Hostname lookup
 ├── device_type.py      # Device classification
 ├── risk_check.py       # Security notes
 ├── scanner.py          # CLI scanner
-├── web_app.py          # Flask web app
+├── app.py          # Flask web app
 ├── templates/
 │   └── index.html      # Dashboard UI
 ├── screenshots/
@@ -110,8 +110,8 @@ net-scanner/
 ## 📥⬇️ Clone the Repository
 
 ```bash
-git clone https://github.com/your-username/net-scanner.git
-cd net-scanner
+git clone https://github.com/sannyuntwin/network-scanner.git
+cd network-scanner
 ```
 
 ---
@@ -164,7 +164,7 @@ Expected output:
 ### 🌐 Option 2: Web Dashboard (Recommended)
 
 ```bash
-python web_app.py
+python app.py
 ```
 
 Open browser:
