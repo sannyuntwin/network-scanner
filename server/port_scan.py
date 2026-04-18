@@ -7,8 +7,13 @@ COMMON_PORTS = {
     3306: "MySQL"
 }
 
-def scan_ports(ip):
-    print(f"\nScanning ports on {ip}")
+def _emit(event_callback, message):
+    if event_callback:
+        event_callback(message)
+
+
+def scan_ports(ip, event_callback=None):
+    _emit(event_callback, f"Scanning ports on {ip}")
     open_ports = []
 
     for port, service in COMMON_PORTS.items():
@@ -17,7 +22,7 @@ def scan_ports(ip):
 
         result = sock.connect_ex((ip, port))
         if result == 0:
-            print(f"✔ Port {port} open ({service})")
+            _emit(event_callback, f"[+] Port {port} open ({service})")
             open_ports.append((port, service))
 
         sock.close()

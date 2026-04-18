@@ -1,11 +1,18 @@
 import subprocess
 import ipaddress
 
-def discover_devices(network):
-    print(f"Scanning network: {network}\n")
-    active_hosts = []
 
-    for ip in ipaddress.IPv4Network(network):
+def _emit(event_callback, message):
+    if event_callback:
+        event_callback(message)
+
+
+def discover_devices(network, event_callback=None):
+    _emit(event_callback, f"Scanning network: {network}")
+    active_hosts = []
+    network_obj = ipaddress.IPv4Network(network, strict=False)
+
+    for ip in network_obj.hosts():
         result = subprocess.run(
             ["ping", "-n", "1", "-w", "300", str(ip)],
             capture_output=True,
@@ -15,7 +22,7 @@ def discover_devices(network):
         output = result.stdout.lower()
 
         if "ttl=" in output:
-            print(f"✔ Device found: {ip}")
+            _emit(event_callback, f"[+] Device found: {ip}")
             active_hosts.append(str(ip))
 
     return active_hosts

@@ -81,8 +81,9 @@ screenshots/
 | ----------------- | ----------------------------- |
 | 🐍 Language       | Python 3                      |
 | 🌐 Backend        | Flask                         |
+| ⚡ Frontend       | Next.js (React + TypeScript) |
 | 📡 Networking     | socket, subprocess, ipaddress |
-| 🎨 Frontend       | HTML, CSS, JavaScript         |
+| 🎨 Styling        | CSS                           |
 | 🗺️ Visualization | vis-network                   |
 | 📄 Output         | Web UI, JSON                  |
 
@@ -92,15 +93,21 @@ screenshots/
 
 ```
 network-scanner/
-├── discovery.py        # ICMP discovery
-├── port_scan.py        # Port scanning
-├── hostname.py         # Hostname lookup
-├── device_type.py      # Device classification
-├── risk_check.py       # Security notes
-├── scanner.py          # CLI scanner
-├── app.py          # Flask web app
-├── templates/
-│   └── index.html      # Dashboard UI
+├── server/             # Python backend
+│   ├── app.py          # Flask API server
+│   ├── scanner.py      # CLI scanner
+│   ├── scan_service.py # Shared scan workflow
+│   ├── location_resolver.py # Device geolocation resolver
+│   ├── device_locations.json # Manual LAN IP to lat/lon mapping
+│   ├── discovery.py    # ICMP discovery
+│   ├── port_scan.py    # Port scanning
+│   ├── hostname.py     # Hostname lookup
+│   ├── device_type.py  # Device classification
+│   └── risk_check.py   # Security notes
+├── frontend/           # Next.js dashboard
+│   ├── app/
+│   ├── components/
+│   └── package.json
 ├── screenshots/
 └── README.md
 ```
@@ -136,10 +143,20 @@ source venv/bin/activate
 
 ---
 
-### 📦 2️⃣ Install Dependencies
+### 📦 2️⃣ Install Backend Dependencies
 
 ```bash
 pip install flask tabulate
+```
+
+---
+
+### ⚡ 3️⃣ Install Frontend Dependencies
+
+```bash
+cd frontend
+npm install
+cd ..
 ```
 
 ---
@@ -149,7 +166,13 @@ pip install flask tabulate
 ### 🖥️ Option 1: CLI Scanner
 
 ```bash
-python scanner.py
+python server/scanner.py
+```
+
+Custom range:
+
+```bash
+python server/scanner.py --network 192.168.1.0/24
 ```
 
 Expected output:
@@ -163,15 +186,68 @@ Expected output:
 
 ### 🌐 Option 2: Web Dashboard (Recommended)
 
+Start backend API:
+
 ```bash
-python app.py
+python server/app.py
+```
+
+Start Next.js frontend (new terminal):
+
+```bash
+cd frontend
+npm run dev
 ```
 
 Open browser:
 
 ```
-http://127.0.0.1:5000
+http://127.0.0.1:3000
 ```
+
+Optional network override:
+
+```text
+http://127.0.0.1:3000/api/scan?network=192.168.1.0/24
+http://127.0.0.1:3000/api/export?network=192.168.1.0/24
+```
+
+Backend security controls (environment variables):
+
+```text
+SCAN_LOCAL_ONLY=1           # default, only localhost can call /scan and /export
+SCAN_RATE_LIMIT_SECONDS=2   # minimum seconds between scan requests per client IP
+SCAN_API_KEY=your-secret    # optional, require X-API-Key header on /scan and /export
+SCAN_NETWORK=192.168.1.0/24 # default network when query/CLI argument is not provided
+FLASK_DEBUG=0               # keep disabled outside local development
+```
+
+Frontend proxy setting (`frontend/.env.local`):
+
+```text
+BACKEND_API_URL=http://127.0.0.1:5000
+```
+
+Real globe setup (required for true map rendering):
+
+1. No map token is required (uses `react-globe.gl` + Three.js).
+2. Configure LAN device coordinates in `server/device_locations.json`.
+
+Example `server/device_locations.json`:
+
+```json
+{
+  "default_site": { "lat": 16.8661, "lon": 96.1951, "label": "Default Site" },
+  "devices": {
+    "192.168.88.1": { "lat": 16.8663, "lon": 96.1954, "label": "Gateway" },
+    "192.168.88.2": { "lat": 16.8662, "lon": 96.1958, "label": "Core Server" }
+  }
+}
+```
+
+Notes:
+- LAN private IPs (for example `192.168.x.x`) are not globally geolocatable from IP alone.
+- For accurate globe markers, maintain the mapping file with your real site coordinates.
 
 ---
 
@@ -202,6 +278,13 @@ http://127.0.0.1:5000
 
 ```bash
 pip install flask
+```
+
+❌ **Next.js dependencies missing**
+
+```bash
+cd frontend
+npm install
 ```
 
 ---

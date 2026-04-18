@@ -1,0 +1,19 @@
+{
+  "default_site": {
+    "lat": 16.8661,
+    "lon": 96.1951,
+    "label": "Default Site"
+  },
+  "devices": {
+    "192.168.88.1": {
+      "lat": 16.8663,
+      "lon": 96.1954,
+      "label": "Gateway"
+    },
+    "192.168.88.2": {
+      "lat": 16.8662,
+      "lon": 96.1958,
+      "label": "Core Server"
+    }
+  }
+}

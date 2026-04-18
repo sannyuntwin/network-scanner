@@ -1,8 +1,9 @@
 import socket
 
+
 def get_hostname(ip):
     try:
         hostname = socket.gethostbyaddr(ip)[0]
         return hostname
-    except socket.herror:
+    except (socket.herror, socket.gaierror, OSError):
         return "Unknown"
